@@ -13,7 +13,12 @@
 
 logs/*
 !.gitkeep
+# extern libraries
 node_modules/
 bower_components/
+app/bower_components/
+
+# destination directory
+dist/
 tmp
 .DS_Store
