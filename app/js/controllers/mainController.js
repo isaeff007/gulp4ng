@@ -1,5 +1,4 @@
-  'use strict';
-    SampleApp.controller('mainController', [
-        '$scope', function ($scope) {
-            $scope.testAngular = "Testing Angular ....";
-        }]);
+module.exports = function($scope) {
+    $scope.testAngular = "Testing...";
+    console.log("required!");
+};

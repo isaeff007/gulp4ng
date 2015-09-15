@@ -6,6 +6,8 @@ var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var minifyCSS = require('gulp-minify-css');
 var clean = require('gulp-clean');
+var browserify = require('gulp-browserify');
+var concat = require('gulp-concat');
 
 //paths paterns used for follow tasks
 var paths = {
@@ -34,6 +36,9 @@ gulp.task('lint', function(){
 //removes the entire build folder so that we start fresh every time we generate a new build.
 gulp.task('clean', function(){
     gulp.src(paths.destAll)
+        .pipe(clean({force:true}));
+    //delete the bundled.js every time!
+    gulp.src('./app/js/bundled.js')
         .pipe(clean({force:true}));
 });
 
@@ -69,6 +74,18 @@ gulp.task('copy-html-files',function(){
 });
 
 
+//create the bundled JS file
+gulp.task('browserify', function(){
+   gulp.src(['app/js/app.js','app/js/controllers/mainController.js'])
+       .pipe(browserify({
+           insertGlobals: true,
+           debug: true
+       }))
+        .pipe(concat('bundled.js'))
+        .pipe(gulp.dest('./app/js'))
+});
+
+
 //start the web server for development directory
 gulp.task('connect', function(){
     connect.server({
@@ -89,8 +106,9 @@ gulp.task('connectDist', function(){
 //this just serves the files in the "app" folder on http://localhost:4000/.
 gulp.task('default',
     //the tasks that should be completed before "default" is starting
-    ['lint', 'connect']
+    [/*'lint',*/ 'clean','browserify','connect']
 );
+
 
 //The build task creates a new directory called "dist", runs the linter, minifies the CSS and JS files,
 //and copies all the HTML files and Bower Components.

@@ -15,10 +15,11 @@ logs/*
 !.gitkeep
 # extern libraries
 node_modules/
-bower_components/
 app/bower_components/
+# concatenated JS file is created dynamically
+app/js/bundled.js
 
 # destination directory
 dist/
 tmp
-.DS_Store
+
