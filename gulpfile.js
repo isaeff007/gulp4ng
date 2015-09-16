@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 
-//plugins (to find in package.json , installed by "npm"
+//plugins installed with "npm install xxx --save"(to find in package.json)
 var connect = require('gulp-connect');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
@@ -8,6 +8,8 @@ var minifyCSS = require('gulp-minify-css');
 var clean = require('gulp-clean');
 var browserify = require('gulp-browserify');
 var concat = require('gulp-concat');
+var browserSync = require('browser-sync');
+var filesize = require('gulp-filesize');
 
 //paths paterns used for follow tasks
 var paths = {
@@ -17,6 +19,7 @@ var paths = {
     appRoot: "app/",
     bowerExclude: "!./app/bower_components/**",
     bowerComponentsAll: "./app/bower_components/**",
+    bundledJSExclude: "!./app/js/bundled.js",
     destAll: "./dist/*",
     destDir: "./dist/",
     destBowerComponentsDir: "./dist/bower_components",
@@ -27,7 +30,7 @@ var paths = {
 //checks for code quality in the JS files. If there are any issues the build fails and all errors output to the console.
 gulp.task('lint', function(){
     //all source js files excepting the installed extern libraries
-    gulp.src([paths.appJS, paths.bowerExclude])
+    gulp.src([paths.appJS, paths.bowerExclude, paths.bundledJSExclude ])
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
@@ -74,7 +77,7 @@ gulp.task('copy-html-files',function(){
 });
 
 
-//create the bundled JS file
+//create the bundled JS file (display the file size for stats)
 gulp.task('browserify', function(){
    gulp.src(['app/js/app.js'])
        .pipe(browserify({
@@ -83,6 +86,7 @@ gulp.task('browserify', function(){
        }))
         .pipe(concat('bundled.js'))
         .pipe(gulp.dest('./app/js'))
+        .pipe(filesize())
 });
 
 //This task simply updates where the bundled.js is stored after creation.
@@ -96,6 +100,23 @@ gulp.task('browserifyDist', function(){
         .pipe(gulp.dest('./dist/js'))
 });
 
+// we can group together multiple watch processes into a watch task
+//the second arument lists the tasks that should be completed before 'watch'.
+//Now, if you run gulp watch in the command line, Gulp should start listed tasks concurrently. When both tasks are completed, watch will run.
+gulp.task('watch', [], function(){
+    gulp.watch(paths.appJS,['lint']); //call lint task if the file matching pattern of paths.appJS has been saved.
+    //here to be other watchers:    //...
+
+});
+
+//do the live reloading if the html or JS file has been changed
+gulp.task('browserSync', function(){
+    browserSync({
+        server:{
+            baseDir: paths.appRoot //tells the browserSync where the root of the server should be
+        }
+    })
+});
 
 //start the web server for development directory
 gulp.task('connect', function(){
