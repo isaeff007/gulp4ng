@@ -76,13 +76,24 @@ gulp.task('copy-html-files',function(){
 
 //create the bundled JS file
 gulp.task('browserify', function(){
-   gulp.src(['app/js/app.js','app/js/controllers/mainController.js'])
+   gulp.src(['app/js/app.js'])
        .pipe(browserify({
            insertGlobals: true,
            debug: true
        }))
         .pipe(concat('bundled.js'))
         .pipe(gulp.dest('./app/js'))
+});
+
+//This task simply updates where the bundled.js is stored after creation.
+gulp.task('browserifyDist', function(){
+    gulp.src(['app/js/app.js'])
+        .pipe(browserify({
+            insertGlobals: true,
+            debug: true
+        }))
+        .pipe(concat('bundled.js'))
+        .pipe(gulp.dest('./dist/js'))
 });
 
 
@@ -115,7 +126,7 @@ gulp.task('default',
 //You can then see what the final build looks like on http://localhost:9999/ before deployment.
 //You should also run the clean task before you generate a build.
 gulp.task('build',
-    ['lint','minify-css','minify-js','copy-html-files','copy-bower-components', 'connectDist']
+    [/*'lint',*/'clean','minify-css','minify-js', 'browserifyDist','copy-html-files','copy-bower-components', 'connectDist']
 );
 
 //build without js-hint (TODO: clarify the use strict and using the SampleApp as variable in controllers
