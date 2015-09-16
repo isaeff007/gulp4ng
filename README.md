@@ -8,3 +8,7 @@ Install the local requirements: "npm install" --> package.json
 Install the Bower components: bower install   --> bower.json
 Run locally: gulp #default task
 Create a build: gulp build
+
+--after the bundled.js has bee created and the angular plugins are avial. as npm modules (package.json)
+  to uninstall it from bower - run:
+  $bower uninstall angular-route angular angular-animate --save
