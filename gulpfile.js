@@ -32,7 +32,7 @@ gulp.task('lint', function(){
     //all source js files excepting the installed extern libraries
     gulp.src([paths.appJS, paths.bowerExclude, paths.bundledJSExclude ])
         .pipe(jshint())
-        .pipe(jshint.reporter('default'))
+        .pipe(jshint.reporter('jshint-stylish'))//to display colored output
         .pipe(jshint.reporter('fail'));
 });
 
